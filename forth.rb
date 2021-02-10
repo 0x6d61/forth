@@ -96,6 +96,8 @@ class Forth
       push(pop | pop)
     elsif token == "XOR"
       push(pop ^ pop)
+    elsif token == "EXIT"
+      exit(0)
     elsif token == ":"
       word = []
       @pc += 1
