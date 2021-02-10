@@ -21,9 +21,9 @@ class Forth
       end
     end
   end
-
+  
   private
-
+  
   def eval(token)
     if !@word.include?(token) && token =~ /[0-9]+/
       push(token.to_i)
@@ -109,6 +109,23 @@ class Forth
         end
       end
       @word[word_name] = word
+    elsif token == "IF"
+      raise ProgramError "THENがありません。" if @tokens.index("THEN").nil?
+      expr = @tokens[@pc..@tokens.size]
+      if_expr = expr.slice(expr.index('IF') .. expr.index("THEN")).drop(1)
+      true_expr = if_expr.take_while{|word| word != 'ELSE'}
+      if pop != 0
+        pc = 0
+        while true_expr.size > pc
+          eval(true_expr[pc])
+          pc+=1
+        end
+
+        @pc+=expr.index("THEN")
+      else
+        @pc += expr.index("ELSE")
+      end
+    elsif token == "THEN"
     elsif token == "."
       print "#{pop} "
     elsif token == "CR"
@@ -156,7 +173,7 @@ class Forth
   end
 
   def nip
-    [*@stack.slice(0, @stack.size - 2), stack.slice(-1)]
+    [*@stack.slice(0, @stack.size - 2), @stack.slice(-1)]
   end
 
   def swap
