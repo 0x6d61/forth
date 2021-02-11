@@ -1,5 +1,2 @@
-23 8 - 3 / .
-7 4 MOD .
-CR 7 4 /MOD .S CR
-2 NEGATE . 
--42 ABS .
+: fib DUP 89 = IF DROP EXIT ELSE SWAP OVER + DUP . CR fib THEN ;
+1 1 fib

@@ -112,17 +112,19 @@ class Forth
       end
       @word[word_name] = word
     elsif token == "IF"
-      raise ProgramError "THENがありません。" if @tokens.index("THEN").nil?
+      raise ProgramError, "THENがありません。" if @tokens.index("THEN").nil?
       expr = @tokens[@pc..@tokens.size]
       if_expr = expr.slice(expr.index('IF') .. expr.index("THEN")).drop(1)
+      
       true_expr = if_expr.take_while{|word| word != 'ELSE'}
       if pop != 0
         pc = 0
         while true_expr.size > pc
           eval(true_expr[pc])
           pc+=1
+          @pc+=1
+          return if @pc > @tokens.size 
         end
-
         @pc+=expr.index("THEN")
       else
         @pc += expr.index("ELSE")
